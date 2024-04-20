@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Fonction pour créer la table dans la base de données
 def create_table_mmr():
-    conn = sqlite3.connect('mmr_database.db')
+    conn = sqlite3.connect('db/mmr_database.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS mmr_data
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +20,7 @@ def create_table_mmr():
 
 # Base de données des utilisateurs (ID, Nom)
 def create_table_player():
-    conn = sqlite3.connect('player_database.db')
+    conn = sqlite3.connect('db/player_database.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS player_data
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +32,7 @@ def create_table_player():
 
 # Fonction pour insérer ou mettre à jour les données dans la base de données
 def insert_or_update_player(player_id, player_name):
-    conn = sqlite3.connect('player_database.db')
+    conn = sqlite3.connect('db/player_database.db')
     c = conn.cursor()
     # Vérifier si l'ID du joueur existe déjà dans la base de données
     c.execute("SELECT * FROM player_data WHERE player_id=?", (player_id,))
@@ -49,7 +49,7 @@ def insert_or_update_player(player_id, player_name):
 
 # Fonction pour insérer les données dans la base de données
 def insert_data(player_id, timestamp, gamemode, mmr):
-    conn = sqlite3.connect('mmr_database.db')
+    conn = sqlite3.connect('db/mmr_database.db')
     c = conn.cursor()
     c.execute("INSERT INTO mmr_data (player_id, timestamp, gamemode, mmr) VALUES (?, ?, ?, ?)", (player_id, timestamp, gamemode, mmr))
     conn.commit()
@@ -95,7 +95,7 @@ def init_player():
 
 # Fonction pour récupérer les données de la base de données
 def get_data(player_id):
-    conn = sqlite3.connect('mmr_database.db')
+    conn = sqlite3.connect('db/mmr_database.db')
     c = conn.cursor()
     c.execute("SELECT gamemode, mmr FROM mmr_data WHERE player_id = ?", (player_id,))
     data = c.fetchall()
@@ -104,7 +104,7 @@ def get_data(player_id):
 
 # Fonction pour récupérer les données de la base de données
 def get_player():
-    conn = sqlite3.connect('player_database.db')
+    conn = sqlite3.connect('db/player_database.db')
     c = conn.cursor()
     c.execute("SELECT player_id, player_name FROM player_data")
     data = c.fetchall()
