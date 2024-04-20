@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Utilisateurs</title>
+</head>
+<body>
+    <h2>Sélectionner un utilisateur :</h2>
+    <form id="userForm" method="get" action="/LoadUser">
+        <label for="user">Utilisateur :</label>
+        <select id="user" name="user">
+            {% for player_id, player_name in data %}
+                <option value="{{ player_id }}">{{ player_name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="submit">Charger</button>
+    </form>
+
+    
+</body>
+</html>
