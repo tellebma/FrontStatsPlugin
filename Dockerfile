@@ -4,8 +4,7 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir /app/db/
-VOLUME /app/db/mmr_database.db
-VOLUME /app/db/player_database.db
+VOLUME /app/db/
 
 EXPOSE 5000
 
