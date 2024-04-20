@@ -84,8 +84,8 @@ def send_player_data():
 @app.route('/initPlayer', methods=['POST'])
 def init_player():
     # Vérifie si les paramètres requis sont présents
-    if 'player_id' not in request.json:
-        return jsonify({'error': 'Missing                                                                                                                   '}), 400
+    if 'player_id' not in request.json or 'player_name' not in request.json:
+        return jsonify({'error': 'Missing params'}), 400
     # Récupère les paramètres de la requête
     player_id = request.json['player_id']
     player_name = request.json['player_name']
