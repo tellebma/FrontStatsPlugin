@@ -135,5 +135,5 @@ def load_user():
 if __name__ == '__main__':
     create_table_mmr()  # Crée la table si elle n'existe pas déjà
     create_table_player()
-    app.run(debug=False, port=5000)
+    app.run(debug=False, port=5000, host='0.0.0.0')
 
