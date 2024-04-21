@@ -11,26 +11,26 @@
     <div id="graph"></div>
 
     <script>
-        var data = {{ data | tojson }};
+       // Données factices pour l'exemple
+       
 
-        var elo = [];
-        var gamemodes = [];
+        var timestamps = {{ date_array | safe }};
+        var elo_values = {{ mmr_array | safe }};
 
-        data.forEach(function(item) {
-            elo.push(item[1]);
-            gamemodes.push(item[0]);
-        });
+       
 
         var trace = {
-            x: gamemodes,
-            y: elo,
-            type: 'bar'
+            x: timestamps,
+            y: elo_values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'MMR'
         };
 
         var layout = {
-            title: 'Graphique MMR par mode de jeu',
+            title: 'Graphique MMR pour {{ player_name }} - RankedSingle',
             xaxis: {
-                title: 'Mode de jeu'
+                title: 'Date'
             },
             yaxis: {
                 title: 'MMR'
