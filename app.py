@@ -94,22 +94,25 @@ def updateHistorique():
 
 @app.route('/user')
 def user():
-    player_id = request.args.get('user')
+    previous_url = request.referrer or None
+    player_id = request.args.get('id')
     player_detail = database.get_player_details(player_id)
     if not player_detail:
         return "Utilisateur non trouvé dans la base de données."
     ranks = database.get_all_ranks(player_detail['player_id'])
     gamemode_ids = [rank['gamemode_id'] for rank in ranks] 
-    historique = database.get_historique(player_id) 
-    return render_template('user.html', player=player_detail, ranks=ranks, gamemode_ids=gamemode_ids, historique=historique, Gamemode=GameMode)
+    historique = database.get_historique(player_id, 10) 
+    return render_template('user.html', previous_url=previous_url, player=player_detail, ranks=ranks, gamemode_ids=gamemode_ids, historique=historique, Gamemode=GameMode, datetime=datetime)
 
 # Route pour charger les données d'un utilisateur et afficher le graphique
-@app.route('/gamemode_id')
+@app.route('/graph_gamemode')
 def load_user():
-    player_id = request.args.get('user')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
-    gamemode_id = request.args.get('gamemode_id')
+    previous_url = request.referrer or None
+    player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
+    gamemode_id = request.args.get('gamemode')
     if player_id:
         user_data = database.get_data(player_id, gamemode_id)
+        print(user_data)
         mmr_array = []
         date_array = []
         for data in user_data:
@@ -118,11 +121,11 @@ def load_user():
             timestamp = data[1]
             datetime_object = datetime.datetime.fromtimestamp(int(timestamp))
             date_array.append(datetime_object.strftime("%Y-%m-%d %H:%M:%S"))
-        print(date_array)
+        
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('graph.html', mmr_array=mmr_array, date_array=date_array)
+            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array)
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
@@ -131,12 +134,13 @@ def load_user():
 # Route pour charger les données d'un utilisateur et afficher le graphique
 @app.route('/historique')
 def histo_user():
-    player_id = request.args.get('user')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
+    previous_url = request.referrer or None
+    player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
     if player_id:
-        historique = database.get_historique(player_id)
+        historique = database.get_historique(player_id, len=50)
         if historique:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('historique.html', historique=historique, Gamemode=GameMode)
+            return render_template('historique.html', previous_url=previous_url,  historique=historique, Gamemode=GameMode, datetime=datetime)
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
@@ -153,4 +157,5 @@ if __name__ == '__main__':
     database.create_table()
     app.run(debug=True, port=5000, host='0.0.0.0')
     
+
 

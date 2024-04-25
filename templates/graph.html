@@ -7,7 +7,9 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <div><a href="/">RETOUR MENU</a></div>
+    {% if  previous_url %}
+    <a href="{{ previous_url }}">RETOUR</a>
+    {% endif %}
     <div id="graph"></div>
 
     <script>

@@ -9,7 +9,7 @@
     <h2>Sélectionner un utilisateur :</h2>
     <form id="userForm" method="get" action="/user">
         <label for="user">Utilisateur :</label>
-        <select id="user" name="user">
+        <select id="user" name="id">
             {% for player_id, player_name in data %}
                 <option value="{{ player_id }}">{{ player_name }}</option>
             {% endfor %}

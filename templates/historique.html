@@ -7,22 +7,60 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <div><a href="/">RETOUR MENU</a></div>
+    <style>
+    td{
+        border: solid blue;
+    }
+    .win{
+        color:green;
+    }
+    .lose{
+        color: red;
+    }
+    
+    .gamemode{
+        
+    }
+    .elo.positif{
+        color:green
+    }
+    .elo.negatif{
+        color:red
+    }
+    .elo.bug{
+        color: grey
+    }
+    </style>
+    {% if  previous_url %}
+    <a href="{{ previous_url }}">RETOUR</a>
+    {% endif %}
     <div id="historique">
-        {% for h in historique %}
-        <div id="{{ h.id }}"  class="historique
-            {% if h.victory %}
-                win"> <h4>VICTOIRE</h4>
-            {% else %}
-                lose"> <h4>DEFAITE</h4>
-            {% endif %}
-            <h3 class="gamemode">{{ Gamemode(h.gamemode_id).str_value }}</h3>
-            <h3 class="elo">{{ h.mmr_won }}</h3>
-            {% if h.rage_quit %}
-                <h5 class="ragequit">Rage quit</h5>
-            {% endif %}
-        </div>
-        {% endfor %}
+        <table>
+            <thead>
+                <thead>
+                    <tr>
+                    <th></th>
+                    <th>Gamemode</th>
+                    <th>MMR Gagné</th>
+                    <th>Date et heure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in historique %}
+                    <tr>
+                        {% if h.victory %}
+                            <td class="win">VICTOIRE</td>
+                        {% else %}
+                            <td class="lose">DEFAITE</td>
+                        {% endif %}
+                        <td class="gamemode">{{ Gamemode(h.gamemode_id).str_value }}</td>
+                        <td class="elo {% if h.mmr_won > 0 %}positif{% elif h.mmr_won < 0 %}negatif{% else %}bug{% endif %}">{{ h.mmr_won }}</td>
+                        <td class="timestamp">{{ datetime.datetime.fromtimestamp(h.timestamp) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </thead>
+        </table> 
     </div>
 </body>
 </html>

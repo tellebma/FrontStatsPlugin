@@ -50,7 +50,6 @@ def create_table_historique():
                  player_id TEXT NOT NULL,
                  timestamp INTEGER NOT NULL,
                  victory BOOL NOT NULL,
-                 rage_quit BOOL NOT NULL,
                  mmr_won INT NOT NULL,
                  gamemode_id INT NOT NULL)''')  # Définir player_id comme unique pour éviter les doublons
     conn.commit()
@@ -100,11 +99,11 @@ def get_data(player_id, gamemode_id):
     conn.close()
     return data
 
-def get_historique(player_id):
+def get_historique(player_id, len=10):
     conn = sqlite3.connect('db/player_database.db')
     conn.row_factory = dict_factory
     c = conn.cursor()
-    c.execute("SELECT id, timestamp, victory, rage_quit, mmr_won, gamemode_id FROM historique_player WHERE player_id = ?", (player_id,))
+    c.execute("SELECT id, timestamp, victory, rage_quit, mmr_won, gamemode_id FROM historique_player WHERE player_id = ? ORDER BY timestamp DESC LIMIT 0, ?", (player_id,len))
     data = c.fetchall()
     conn.close()
     return data
