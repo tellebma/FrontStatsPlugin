@@ -58,7 +58,6 @@ def updateMmr():
 
 @app.route('/updateHistorique', methods=['POST'])
 def updateHistorique():
-    print("test")
     print(f"updateHistorique => {request.json}")
     requirements = [
         'player_id',
