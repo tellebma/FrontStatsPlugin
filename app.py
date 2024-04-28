@@ -124,7 +124,7 @@ def load_user():
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array)
+            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array, gamemode_name=GameMode(gamemode_id).str_value)
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
