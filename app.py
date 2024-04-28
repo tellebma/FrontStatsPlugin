@@ -81,7 +81,6 @@ def updateHistorique():
     database.insert_history(request.json['player_id'],
     request.json['timestamp'],
     request.json['victory'],
-    False,
     request.json['mmr_won'],
     request.json['gamemode_id'])
     
