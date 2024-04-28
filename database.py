@@ -85,7 +85,7 @@ def insert_data(player_id, timestamp, gamemode_id, mmr):
 def insert_history(player_id, timestamp, victory, mmr_won, gamemode_id):
     conn = sqlite3.connect('db/player_database.db')
     c = conn.cursor()
-    c.execute("INSERT INTO historique_player (player_id, timestamp, victory, mmr_won, gamemode_id) VALUES (?, ?, ?, ?, ?, ?)", (player_id, timestamp, victory, mmr_won, gamemode_id))
+    c.execute("INSERT INTO historique_player (player_id, timestamp, victory, mmr_won, gamemode_id) VALUES (?, ?, ?, ?, ?)", (player_id, timestamp, victory, mmr_won, gamemode_id))
     conn.commit()
     conn.close()
 
