@@ -108,7 +108,7 @@ def user():
 def load_user():
     previous_url = request.referrer or None
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
-    gamemode_id = request.args.get('gamemode')
+    gamemode_id = int(request.args.get('gamemode'))
     if player_id:
         user_data = database.get_data(player_id, gamemode_id)
         print(user_data)
@@ -135,11 +135,25 @@ def load_user():
 def histo_user():
     previous_url = request.referrer or None
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
+    default_limit = 10
+    limit = int(request.args.get('limit', default_limit))
+    print(limit)
     if player_id:
-        historique = database.get_historique(player_id, len=50)
+        player_detail = database.get_player_details(player_id)
+        historique = database.get_historique(player_id, len=limit)
         if historique:
+            url_more_histo = f"/historique?id={player_id}&limit={limit + default_limit}"
+            previous_url = f"/user?id={player_id}"
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('historique.html', previous_url=previous_url,  historique=historique, Gamemode=GameMode, datetime=datetime)
+            return render_template('historique.html',
+                                    previous_url=previous_url,
+                                    player=player_detail,
+                                    historique=historique,
+                                    limit=limit,
+                                    url_more_histo=url_more_histo,
+                                    Gamemode=GameMode,
+                                    datetime=datetime,
+                                    )
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:

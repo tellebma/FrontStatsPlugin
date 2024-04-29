@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historique {{ player_name }}</title>
+    <title>Historique {{ player.player_name }}</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
@@ -34,6 +34,7 @@
     {% if  previous_url %}
     <a href="{{ previous_url }}">RETOUR</a>
     {% endif %}
+    <h1>Historique {{ player.player_name }}</h1>
     <div id="historique">
         <table>
             <thead>
@@ -54,13 +55,17 @@
                             <td class="lose">DEFAITE</td>
                         {% endif %}
                         <td class="gamemode">{{ Gamemode(h.gamemode_id).str_value }}</td>
-                        <td class="elo {% if h.mmr_won > 0 %}positif{% elif h.mmr_won < 0 %}negatif{% else %}bug{% endif %}">{{ h.mmr_won }}</td>
+                        <td class="elo {% if h.mmr_won > 0 %}positif{% elif h.mmr_won < 0 %}negatif{% else %}bug{% endif %}">
+                            <!-- ce serait cool d'ajouter le mmr de l'apres game -->
+                            ({% if h.mmr_won > 0 %}+{% endif %}{{ h.mmr_won }})
+                        </td>
                         <td class="timestamp">{{ datetime.datetime.fromtimestamp(h.timestamp) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </thead>
         </table> 
+        <span><a href="{{ url_more_histo }}">Afficher d'avantage</a></span>
     </div>
 </body>
 </html>
