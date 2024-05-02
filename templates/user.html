@@ -37,7 +37,7 @@
     </div>
 <div class="row">
      <div class="col" id="historique">
-        <h3>Historique</h3><span><a href="/historique?id={{ player.player_id }}">(plus)</a></span>
+        <h3>Historique<span class="small"><a href="/historique?id={{ player.player_id }}">(plus)</a></span></h3>
         {% for h in historique %}
         <div id="{{ h.id }}"  class="historique">
             {% if h.victory %}

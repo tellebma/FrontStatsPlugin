@@ -148,3 +148,8 @@ body, html {
     color: white;
     text-align: center;
 }
+
+.small{
+    margin-left: 8px;
+    font-size: 1.1rem;
+}
