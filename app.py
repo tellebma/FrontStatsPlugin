@@ -81,7 +81,6 @@ def updateHistorique():
     database.insert_history(request.json['player_id'],
     request.json['timestamp'],
     request.json['victory'],
-    False,
     request.json['mmr_won'],
     request.json['gamemode_id'])
     
@@ -123,7 +122,7 @@ def user():
 def load_user():
     previous_url = request.referrer or None
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
-    gamemode_id = request.args.get('gamemode')
+    gamemode_id = int(request.args.get('gamemode'))
     if player_id:
         user_data = database.get_data(player_id, gamemode_id)
         print(user_data)
@@ -139,7 +138,7 @@ def load_user():
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array)
+            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array, gamemode_name=GameMode(gamemode_id).str_value)
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
@@ -150,11 +149,25 @@ def load_user():
 def histo_user():
     previous_url = request.referrer or None
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
+    default_limit = 10
+    limit = int(request.args.get('limit', default_limit))
+    print(limit)
     if player_id:
-        historique = database.get_historique(player_id, len=50)
+        player_detail = database.get_player_details(player_id)
+        historique = database.get_historique(player_id, len=limit)
         if historique:
+            url_more_histo = f"/historique?id={player_id}&limit={limit + default_limit}"
+            previous_url = f"/user?id={player_id}"
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('historique.html', previous_url=previous_url,  historique=historique, Gamemode=GameMode, datetime=datetime)
+            return render_template('historique.html',
+                                    previous_url=previous_url,
+                                    player=player_detail,
+                                    historique=historique,
+                                    limit=limit,
+                                    url_more_histo=url_more_histo,
+                                    Gamemode=GameMode,
+                                    datetime=datetime,
+                                    )
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
@@ -165,28 +178,15 @@ def index():
     data = database.get_all_player()
     return render_template('index.html', data=data)
 
+@app.errorhandler(500)
+def internal_server_error(error):
+    # Renvoyer le modèle d'erreur 500
+    return render_template('erreur.html',error=error), 500
 
 if __name__ == '__main__':
     # Creent les tables si elles n'existent pas
     database.create_table()
-
-    database.insert_data(player_id="1", timestamp=10, gamemode_id=11, mmr=1000)
-    database.insert_data(player_id="2", timestamp=20, gamemode_id=11, mmr=1200)
-    database.insert_data(player_id="3", timestamp=30, gamemode_id=11, mmr=1100)
-
-    database.insert_or_update_player(player_id="1", player_name="Mathieu")
-    database.insert_or_update_player(player_id="2", player_name="Maxime")
-    database.insert_or_update_player(player_id="3", player_name="Spica")
-
-    database.insert_history(player_id="1", timestamp=10, victory=True, mmr_won=30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="1", timestamp=20, victory=False, mmr_won=-30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="1", timestamp=30, victory=False, mmr_won=-30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="2", timestamp=40, victory=True, mmr_won=30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="2", timestamp=50, victory=True, mmr_won=30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="3", timestamp=60, victory=False, mmr_won=-30, gamemode_id=11, rage_quit=False)
-    database.insert_history(player_id="3", timestamp=70, victory=False, mmr_won=-30, gamemode_id=11, rage_quit=False)
-
-    app.run(debug=True, port=5000, host='127.0.0.1')
+    app.run(debug=False, port=5000, host='0.0.0.0')
     
 
 
