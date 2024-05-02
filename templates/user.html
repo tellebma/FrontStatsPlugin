@@ -1,79 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Utilisateurs</title>
-</head>
-<style>
-    .win{
-        color:green
-        
-    }
-    .lose{
-        color: red
-    }
-    .historique{
-        
-        margin-bottom: 12px;
-    }
-    #account_name{
-        text-align: center;
-    }
-   
-    #summary{
-        border: solid blue;
-    }
-    #graph{
-        border: solid blue;
-    }
-    #historique{
-        border: solid blue;
-    }
-</style>
-<body>
-    {% if  previous_url %}
-    <a href="{{ previous_url }}">RETOUR</a>
-    {% endif %}
-    <h2 id="account_name">Compte {{ player.player_name }}</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 id="account_name" class="username"> {{ player.player_name }} </h2>
     <div id="summary">
-        <h3>Elo actuellement</h3>
-        <table>
+        <h3>Elo</h3>
+        <div id="table_elo_div">
+            <table class="table_elo">
         <thead>
             <tr>
-              <th scope="col"></th>
-              <th scope="col">now</th>
-              <th scope="col">top</th>
+                <th scope="col"></th>
+                <th scope="col">NOW</th>
+                <th scope="col" >TOP</th>
+                <th scope="col">DIFF</th>
+                <th scope="col">Graphique</th>
             </tr>
           </thead>
           <tbody>
             {% for rank in ranks %}
             <tr>
-              <th scope="row">{{ Gamemode(rank.gamemode_id).str_value }}</th>
-              <td>{{ rank.mmr }}</td>
-              <td>{{ rank.max_mmr }}</td>
+                <th scope="row">{{ Gamemode(rank.gamemode_id).str_value }}</th>
+                <td>{{ rank.mmr }}</td>
+                <td class="cell_top">{{ rank.max_mmr }}</td>
+                {% if rank.mmr - rank.max_mmr <0 %}
+                <td class="below">{{ rank.mmr - rank.max_mmr }}</td>
+                {% else %}
+                <td class="up">{{ rank.mmr - rank.max_mmr }}</td>
+                {% endif %}
+                <td class="graph"><a href="/gamemode?id={{ player.player_id }}&gamemode={{ rank.gamemode_id }}">bouton</a></td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
-    </div>
-    <div id="graph">
-        <form id="gamemodeForm" method="get" action="/graph_gamemode">
-            <input id="user" name="id" type="password" value="{{ player.player_id }}" hidden>
-            <label for="gamemode">Graphique par mode de jeu :</label>
-            <select id="gamemode" name="gamemode">
-                {% for gamemode_id in gamemode_ids %}
-                    <option value="{{ gamemode_id }}">{{ Gamemode(gamemode_id).str_value }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
-            <button type="submit">Charger</button>
-        </form>
-    </div>
-    
+        </div>
 
-
-    <div id="historique">
+    </div>
+<div class="row">
+     <div class="col" id="historique">
         <h3>Historique</h3><span><a href="/historique?id={{ player.player_id }}">(plus)</a></span>
         {% for h in historique %}
         <div id="{{ h.id }}"  class="historique">
@@ -87,10 +50,38 @@
         </div>
         {% endfor %}
     </div>
-    
-        
-    
 
+    <div class="col" id="graph">
+        <script>
+       // Données factices pour l'exemple
+
+
+        var timestamps = {{ date_array | safe }};
+        var elo_values = {{ mmr_array | safe }};
+
+        var trace = {
+            x: timestamps,
+            y: elo_values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'MMR'
+        };
+
+        var layout = {
+            title: 'Graphique MMR pour {{ player_name }} - RankedSingle',
+            xaxis: {
+                title: 'Date'
+            },
+            yaxis: {
+                title: 'MMR'
+            }
+        };
+
+        Plotly.newPlot('graph', [trace], layout);
+    </script>
+    </div>
     
-</body>
-</html>
+</div>
+
+
+{% endblock %}

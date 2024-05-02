@@ -1,5 +1,17 @@
-*.db
+# IDE
+.idea
+.vscode/
+
+
+
+# Python
 venv
-*.log
 __pycache__
+
+
+# App
 db/
+*.db
+# si jamais on décide de mettre des logs externe...
+*.log 
+
