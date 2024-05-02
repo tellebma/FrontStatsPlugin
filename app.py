@@ -123,20 +123,22 @@ def load_user():
         today_i_array = []
         for i in range(0,len(user_data)):
             mmr = user_data[i][0]
-            mmr_array.append(mmr)
+            
             timestamp = user_data[i][1]
             datetime_object = datetime.datetime.fromtimestamp(int(timestamp))
             datetime_str = datetime_object.strftime("%Y-%m-%d %H:%M")
-            date_array.append(datetime_str)
-            i_array.append(i)
-            print(datetime_object)
             if datetime_object >= il_y_a_24_heures and datetime_object <= maintenant:
                 today_mmr_array.append(mmr)
                 today_date_array.append(datetime_str)
                 today_i_array.append(i)
+            else:
+                mmr_array.append(mmr)
+                date_array.append(datetime_str)
+                i_array.append(i)
+
 
         object_mmr = {'i_array':i_array,'date_array':date_array,'mmr_array':mmr_array}
-        object_mmr_today = {'i_array':today_i_array,'date_array':today_mmr_array,'mmr_array':today_mmr_array}
+        object_mmr_today = {'i_array':today_i_array,'date_array':today_date_array,'mmr_array':today_mmr_array}
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
@@ -194,7 +196,7 @@ def internal_server_error(error):
 if __name__ == '__main__':
     # Creent les tables si elles n'existent pas
     database.create_table()
-    app.run(debug=False, port=5000, host='0.0.0.0')
+    app.run(debug=True, port=5000, host='0.0.0.0')
     
 
 
