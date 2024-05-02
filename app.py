@@ -110,21 +110,43 @@ def load_user():
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
     gamemode_id = int(request.args.get('gamemode'))
     if player_id:
+        dernieres_24_heures = datetime.timedelta(hours=24)
+        maintenant = datetime.datetime.now()
+        il_y_a_24_heures = maintenant - dernieres_24_heures
         user_data = database.get_data(player_id, gamemode_id)
         print(user_data)
         mmr_array = []
         date_array = []
-        for data in user_data:
-            mmr = data[0]
+        i_array = []
+        today_mmr_array = []
+        today_date_array = []
+        today_i_array = []
+        for i in range(0,len(user_data)):
+            mmr = user_data[i][0]
             mmr_array.append(mmr)
-            timestamp = data[1]
+            timestamp = user_data[i][1]
             datetime_object = datetime.datetime.fromtimestamp(int(timestamp))
-            date_array.append(datetime_object.strftime("%Y-%m-%d %H:%M:%S"))
-        
+            datetime_str = datetime_object.strftime("%Y-%m-%d %H:%M")
+            date_array.append(datetime_str)
+            i_array.append(i)
+            print(datetime_object)
+            if datetime_object >= il_y_a_24_heures and datetime_object <= maintenant:
+                today_mmr_array.append(mmr)
+                today_date_array.append(datetime_str)
+                today_i_array.append(i)
+
+        object_mmr = {'i_array':i_array,'date_array':date_array,'mmr_array':mmr_array}
+        object_mmr_today = {'i_array':today_i_array,'date_array':today_mmr_array,'mmr_array':today_mmr_array}
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array, gamemode_name=GameMode(gamemode_id).str_value)
+            
+            return render_template('graph.html',
+                                    previous_url=previous_url,
+                                    object_mmr=object_mmr,
+                                    object_mmr_today=object_mmr_today,
+                                    gamemode_name=GameMode(gamemode_id).str_value
+                                  )
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:

@@ -16,8 +16,8 @@
        // Données factices pour l'exemple
        
 
-        var timestamps = {{ date_array | safe }};
-        var elo_values = {{ mmr_array | safe }};
+        var timestamps = {{ object_mmr.i_array | safe }};
+        var elo_values = {{ object_mmr.mmr_array | safe }};
 
        
 
@@ -26,8 +26,25 @@
             y: elo_values,
             type: 'scatter',
             mode: 'lines+markers',
-            name: 'MMR'
+            name: 'MMR',
+            text: {{ object_mmr.date_array | safe }},
+            line: {shape: 'spline'},
         };
+        {% if object_mmr_today.mmr_array %}
+        var timestamps_today = {{ object_mmr_today.i_array | safe }};
+        var elo_values_today = {{ object_mmr_today.mmr_array | safe }};
+
+        var trace_today = {
+            x: timestamps_today,
+            y: elo_values_today,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'MMR',
+            text: {{ object_mmr_today.date_array | safe }},
+            line: {shape: 'spline'}
+        };
+        {% endif %}
+        
 
         var layout = {
             title: 'Graphique MMR pour {{ player_name }} - {{ gamemode_name }}',
@@ -36,10 +53,15 @@
             },
             yaxis: {
                 title: 'MMR'
-            }
+            },margin: {
+                autoexpand: false,
+                l: 100,
+                r: 20,
+                t: 100
+            },
         };
 
-        Plotly.newPlot('graph', [trace], layout);
+        Plotly.newPlot('graph', [trace{% if object_mmr_today.mmr_array %},trace_today{% endif %}], layout);
     </script>
 </body>
 </html>
