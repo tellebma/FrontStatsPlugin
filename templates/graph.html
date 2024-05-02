@@ -10,16 +10,13 @@
     {% if  previous_url %}
     <a href="{{ previous_url }}">RETOUR</a>
     {% endif %}
-    <div id="graph"></div>
-
-    <script>
+    <div id="graph">
+        <script>
        // Données factices pour l'exemple
-       
+
 
         var timestamps = {{ date_array | safe }};
         var elo_values = {{ mmr_array | safe }};
-
-       
 
         var trace = {
             x: timestamps,
@@ -41,5 +38,9 @@
 
         Plotly.newPlot('graph', [trace], layout);
     </script>
+
+    </div>
+
+
 </body>
 </html>
