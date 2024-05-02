@@ -191,7 +191,7 @@ def internal_server_error(error):
 
 @app.errorhandler(500)
 def internal_server_error(error):
-    # Renvoyer le modèle d'erreur 404
+    # Renvoyer le modèle d'erreur 500
     return render_template('erreur.html',error=error), 500
 
 if __name__ == '__main__':
