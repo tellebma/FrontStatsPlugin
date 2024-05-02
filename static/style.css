@@ -98,6 +98,7 @@ body, html {
     margin-left: auto;
     margin-right: auto;
 }
+
 .table_elo tbody td {
   font-size: 14px;
   color: #FFFFFF;
@@ -110,6 +111,7 @@ body, html {
   background: linear-gradient(to bottom, #875aa9 0%, #6f3998 66%, #5F238D 100%);
   border-bottom: 2px solid #AEAEAE;
 }
+
 .table_elo thead th {
   font-size: 17px;
   font-weight: bold;
@@ -118,15 +120,15 @@ body, html {
   border-left: 2px solid #D0E4F5;
 }
 
-#up{
-    color: #21a404;
+.up{
+    background-color: #114e03;
 }
 
-#below{
-    color: #c50000;
+.below{
+    background-color: #4e0202;
 }
 
-#graph{
+.graph{
 
 }
 #historique{
@@ -140,4 +142,9 @@ body, html {
 
 .col{
     padding: 20px;
+}
+
+.error{
+    color: white;
+    text-align: center;
 }

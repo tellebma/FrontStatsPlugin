@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphique MMR {{ player_name }}</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     {% if  previous_url %}
     <a href="{{ previous_url }}">RETOUR</a>
     {% endif %}
@@ -38,9 +32,4 @@
 
         Plotly.newPlot('graph', [trace], layout);
     </script>
-
-    </div>
-
-
-</body>
-</html>
+{% endblock %}

@@ -13,6 +13,7 @@
                 <th scope="col">NOW</th>
                 <th scope="col" >TOP</th>
                 <th scope="col">DIFF</th>
+                <th scope="col">Graphique</th>
             </tr>
           </thead>
           <tbody>
@@ -20,13 +21,13 @@
             <tr>
                 <th scope="row">{{ Gamemode(rank.gamemode_id).str_value }}</th>
                 <td>{{ rank.mmr }}</td>
-                <td id="cell_top">{{ rank.max_mmr }}</td>
+                <td class="cell_top">{{ rank.max_mmr }}</td>
                 {% if rank.mmr - rank.max_mmr <0 %}
-                <td id="below">{{ rank.mmr - rank.max_mmr }}</td>
+                <td class="below">{{ rank.mmr - rank.max_mmr }}</td>
                 {% else %}
-                <td id="up">{{ rank.mmr - rank.max_mmr }}</td>
+                <td class="up">{{ rank.mmr - rank.max_mmr }}</td>
                 {% endif %}
-
+                <td class="graph"><a href="/gamemode?id={{ player.player_id }}&gamemode={{ rank.gamemode_id }}">bouton</a></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -79,12 +80,8 @@
         Plotly.newPlot('graph', [trace], layout);
     </script>
     </div>
+    
 </div>
 
 
 {% endblock %}
-
-
-
-    
-        
