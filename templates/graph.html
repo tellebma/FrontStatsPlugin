@@ -4,21 +4,36 @@
     {% if  previous_url %}
     <a href="{{ previous_url }}">RETOUR</a>
     {% endif %}
-    <div id="graph">
-        <script>
-       // Données factices pour l'exemple
+    <div id="graph"></div>
 
-
-        var timestamps = {{ date_array | safe }};
-        var elo_values = {{ mmr_array | safe }};
+    <script>
+        var x_value = {{ object_mmr.i_array | safe }};
+        var elo_values = {{ object_mmr.mmr_array | safe }};
 
         var trace = {
-            x: timestamps,
+            x: x_value,
             y: elo_values,
+            name: 'Courbe du MMR',
             type: 'scatter',
             mode: 'lines+markers',
-            name: 'MMR'
+            text: {{ object_mmr.date_array | safe }},
+            line: {shape: 'spline'}
         };
+        {% if object_mmr_today.mmr_array %}
+            var x_value_today = {{ object_mmr_today.i_array | safe }};
+            var elo_values_today = {{ object_mmr_today.mmr_array | safe }};
+
+            var trace_today = {
+                x: x_value_today,
+                y: elo_values_today,
+                name: 'ces dernières 24h',
+                type: 'scatter',
+                mode: 'lines+markers',
+                text: {{ object_mmr_today.date_array | safe }},
+                line: {shape: 'spline'}
+            };
+        {% endif %}
+        
 
         var layout = {
             title: 'Graphique MMR pour {{ player_name }} - {{ gamemode_name }}',
@@ -30,6 +45,6 @@
             }
         };
 
-        Plotly.newPlot('graph', [trace], layout);
+        Plotly.newPlot('graph', [trace{% if object_mmr_today.mmr_array %},trace_today{% endif %}], layout);
     </script>
 {% endblock %}
