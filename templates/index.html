@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Utilisateurs</title>
-</head>
-<body>
-    <h2>Sélectionner un utilisateur :</h2>
-    <form id="userForm" method="get" action="/user">
-        <label for="user">Utilisateur :</label>
-        <select id="user" name="id">
-            {% for player_id, player_name in data %}
-                <option value="{{ player_id }}">{{ player_name }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <button type="submit">Charger</button>
-    </form>
+{% extends 'base.html' %}
 
-    
-</body>
-</html>
+{% block title %} RocketMax {% endblock %}
+
+{% block content %}
+    <div id="index_container" class="center">
+            <div id="index_user">
+                {% for player_id, player_name in data %}
+                        <a href="{{ url_for('user', id=player_id)}}" class="user_btn" id="{{ player_id }}">{{ player_name }}</a>
+                {% endfor %}
+        </div>
+    </div>
+
+
+{% endblock %}
