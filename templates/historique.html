@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historique {{ player.player_name }}</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <style>
     td{
         border: solid blue;
@@ -67,5 +61,4 @@
         </table> 
         <span><a href="{{ url_more_histo }}">Afficher d'avantage</a></span>
     </div>
-</body>
-</html>
+{% endblock %}

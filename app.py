@@ -98,10 +98,17 @@ def user():
     player_detail = database.get_player_details(player_id)
     if not player_detail:
         return "Utilisateur non trouvé dans la base de données."
-    ranks = database.get_all_ranks(player_detail['player_id'])
-    gamemode_ids = [rank['gamemode_id'] for rank in ranks] 
+    
+    
+    
     historique = database.get_historique(player_id, 10)
-    player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
+
+    ranks = database.get_all_ranks(player_detail['player_id'])
+    if not ranks:
+        return render_template('user_no_data.html', player=player_detail)
+    gamemode_ids = [rank['gamemode_id'] for rank in ranks] 
+    
+    # Pourquoi prendre le premier ? 
     gamemode_id = gamemode_ids[0]
     user_data = database.get_data(player_id, gamemode_id)
     mmr_array = []
@@ -112,33 +119,56 @@ def user():
         timestamp = data[1]
         datetime_object = datetime.datetime.fromtimestamp(int(timestamp))
         date_array.append(datetime_object.strftime("%Y-%m-%d %H:%M:%S"))
-    print("ty")
-    print(date_array)
+    
 
     return render_template('user.html', previous_url=previous_url, player=player_detail, ranks=ranks, gamemode_ids=gamemode_ids, historique=historique, Gamemode=GameMode, datetime=datetime, mmr_array=mmr_array, date_array=date_array)
 
 # Route pour charger les données d'un utilisateur et afficher le graphique
-@app.route('/graph_gamemode')
+@app.route('/gamemode')
 def load_user():
     previous_url = request.referrer or None
     player_id = request.args.get('id')  # Récupérer l'ID de l'utilisateur depuis les paramètres de requête
     gamemode_id = int(request.args.get('gamemode'))
     if player_id:
+        dernieres_24_heures = datetime.timedelta(hours=24)
+        maintenant = datetime.datetime.now()
+        il_y_a_24_heures = maintenant - dernieres_24_heures
         user_data = database.get_data(player_id, gamemode_id)
         print(user_data)
         mmr_array = []
         date_array = []
-        for data in user_data:
-            mmr = data[0]
-            mmr_array.append(mmr)
-            timestamp = data[1]
+        i_array = []
+        today_mmr_array = []
+        today_date_array = []
+        today_i_array = []
+        for i in range(0,len(user_data)):
+            mmr = user_data[i][0]
+            
+            timestamp = user_data[i][1]
             datetime_object = datetime.datetime.fromtimestamp(int(timestamp))
-            date_array.append(datetime_object.strftime("%Y-%m-%d %H:%M:%S"))
-        
+            datetime_str = datetime_object.strftime("%Y-%m-%d %H:%M")
+            if datetime_object >= il_y_a_24_heures and datetime_object <= maintenant:
+                today_mmr_array.append(mmr)
+                today_date_array.append(datetime_str)
+                today_i_array.append(i)
+            else:
+                mmr_array.append(mmr)
+                date_array.append(datetime_str)
+                i_array.append(i)
+
+
+        object_mmr = {'i_array':i_array,'date_array':date_array,'mmr_array':mmr_array}
+        object_mmr_today = {'i_array':today_i_array,'date_array':today_date_array,'mmr_array':today_mmr_array}
 
         if user_data:
             # Si des données utilisateur sont trouvées, les transmettre au template graph.html
-            return render_template('graph.html', previous_url=previous_url,  mmr_array=mmr_array, date_array=date_array, gamemode_name=GameMode(gamemode_id).str_value)
+            
+            return render_template('graph.html',
+                                    previous_url=previous_url,
+                                    object_mmr=object_mmr,
+                                    object_mmr_today=object_mmr_today,
+                                    gamemode_name=GameMode(gamemode_id).str_value
+                                  )
         else:
             return "Utilisateur non trouvé dans la base de données."
     else:
@@ -178,6 +208,11 @@ def index():
     data = database.get_all_player()
     return render_template('index.html', data=data)
 
+@app.errorhandler(404)
+def internal_server_error(error):
+    # Renvoyer le modèle d'erreur 404
+    return render_template('erreur.html',error=error), 404
+
 @app.errorhandler(500)
 def internal_server_error(error):
     # Renvoyer le modèle d'erreur 500
@@ -187,6 +222,3 @@ if __name__ == '__main__':
     # Creent les tables si elles n'existent pas
     database.create_table()
     app.run(debug=False, port=5000, host='0.0.0.0')
-    
-
-
